@@ -7,6 +7,8 @@ const routes = (app) => {
   app.post("/login", users.login);
 
   app.post("/refresh_token", users.refresh_token);
+
+  app.post("/logout", users.logout);
 };
 
 module.exports = {

@@ -62,8 +62,19 @@ const refresh_token = async (req, res, next) => {
   );
 };
 
+const logout = (req, res, next) => {
+  res.cookie("jrm", "", {
+    httpOnly: true,
+    path: "/refresh_token",
+    SameSite: "None",
+    secure: true,
+  });
+  res.json({ message: "Success" });
+};
+
 module.exports = {
   register,
   login,
   refresh_token,
+  logout,
 };
