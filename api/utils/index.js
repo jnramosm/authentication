@@ -1,3 +1,4 @@
+require("dotenv").config();
 const bcrytp = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -31,9 +32,14 @@ const hashPassword = (password) => {
   return bcrytp.hashSync(password, 12);
 };
 
+const comparePassword = (password, passwordDb) => {
+  return bcrytp.compareSync(password, passwordDb);
+};
+
 module.exports = {
   generateCode,
   createAccesToken,
   createRefreshToken,
   hashPassword,
+  comparePassword,
 };

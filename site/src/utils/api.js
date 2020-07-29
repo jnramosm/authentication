@@ -4,6 +4,10 @@ export const userRegister = async (email, password) => {
   return await requestApi("/register", "POST", { email, password });
 };
 
+export const userLogin = async (email, password) => {
+  return await requestApi("/login", "POST", { email, password });
+};
+
 const requestApi = async (
   path = "",
   method = "GET",
@@ -32,6 +36,7 @@ const requestApi = async (
     mode: "cors",
     cache: "no-cache",
     headers,
+    credentials: "include",
     body: data ? JSON.stringify(data) : null,
   });
 

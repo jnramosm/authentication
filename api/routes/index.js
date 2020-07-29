@@ -7,6 +7,8 @@ const routes = (app) => {
   });
 
   app.post("/register", users.register);
+
+  app.post("/login", users.login);
 };
 
 module.exports = {
