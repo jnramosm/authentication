@@ -40,7 +40,30 @@ const login = (req, res, next) => {
   }
 };
 
+const refresh_token = async (req, res, next) => {
+  const result = await users.refresh_token(
+    req.headers.cookie.split("=")[1],
+    async (tokens, email, message) => {
+      if (tokens.accessToken !== "") {
+        await users.updateToken(email, tokens.accessToken);
+
+        res.cookie("jrm", tokens.refreshToken, {
+          httpOnly: true,
+          path: "/refresh_token",
+          SameSite: "None",
+          secure: true,
+        });
+        res.json({
+          message,
+          accessToken: tokens.accessToken,
+        });
+      } else return res.json({ message, accessToken: "" });
+    }
+  );
+};
+
 module.exports = {
   register,
   login,
+  refresh_token,
 };

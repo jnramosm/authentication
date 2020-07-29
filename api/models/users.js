@@ -43,6 +43,31 @@ const login = (user = {}, cb) => {
   });
 };
 
+const refresh_token = (refreshToken, cb) => {
+  if (!refreshToken)
+    cb({ accessToken: "", refreshToken }, null, "No refresh token");
+  let payload = null;
+  try {
+    payload = utils.verify(refreshToken);
+  } catch (e) {
+    console.log(e);
+    cb({ accessToken: "", refreshToken }, null, "Error verifying token");
+  }
+
+  connection(async (db) => {
+    let userDb = await db.collection("users").findOne({ email: payload.email });
+    if (!userDb) cb({ accessToken: "", refreshToken }, null, "No user found");
+
+    if (userDb.tokenVersion !== payload.tokenVersion)
+      return cb({ accessToken: "", refreshToken }, null, "Wrong refresh token");
+
+    const accessToken = utils.createAccesToken(userDb);
+    const refreshToken = utils.createRefreshToken(userDb);
+
+    cb({ accessToken, refreshToken }, { email: userDb.email }, "Success");
+  });
+};
+
 const updateToken = async (user = {}, accessToken) => {
   connection((db) => {
     db.collection("users").findOne(
@@ -83,4 +108,5 @@ module.exports = {
   getByEmail,
   login,
   updateToken,
+  refresh_token,
 };

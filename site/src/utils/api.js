@@ -8,6 +8,10 @@ export const userLogin = async (email, password) => {
   return await requestApi("/login", "POST", { email, password });
 };
 
+export const refreshToken = async () => {
+  return await requestApi("/refresh_token", "POST");
+};
+
 const requestApi = async (
   path = "",
   method = "GET",

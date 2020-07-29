@@ -8,7 +8,9 @@ class Auth {
     this.accessToken = token;
     if (token === "") {
       this.authenticated = false;
-    } else this.authenticated = true;
+    } else {
+      this.authenticated = true;
+    }
   }
 
   setAuthentication(state) {

@@ -2,48 +2,44 @@ import React from "react";
 import Register from "./pages/register/register";
 import Login from "./pages/login/login";
 import Home from "./pages/home/home";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import PrivateRoute from "./components/privateroute";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { refreshToken } from "./utils";
 import auth from "./auth/auth";
 
-function App() {
-  return (
-    <Router>
-      <Switch>
-        <Route path="/register" component={Register} />
-        <Route path="/login" component={Login} />
-        <PrivateRoute exact path="/" component={Home} />
-      </Switch>
-    </Router>
-  );
-}
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+    };
+  }
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        if (auth.isAuthenticated()) {
-          return <Component {...props} />;
-        } else {
-          return (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: {
-                  from: props.location,
-                },
-              }}
-            />
-          );
-        }
-      }}
-    />
-  );
-};
+  async componentDidMount() {
+    let res = await refreshToken();
+    auth.setAccessToken(res.accessToken);
+    this.setState({ loading: false });
+  }
+
+  render() {
+    if (this.state.loading) {
+      return (
+        <Router>
+          <h1>Loading...</h1>
+        </Router>
+      );
+    } else {
+      return (
+        <Router>
+          <Switch>
+            <Route path="/register" component={Register} />
+            <Route path="/login" component={Login} />
+            <PrivateRoute exact path="/" component={Home} />
+          </Switch>
+        </Router>
+      );
+    }
+  }
+}
 
 export default App;

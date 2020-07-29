@@ -36,10 +36,15 @@ const comparePassword = (password, passwordDb) => {
   return bcrytp.compareSync(password, passwordDb);
 };
 
+const verify = (token) => {
+  return jwt.verify(token, process.env.SECRET_JWT_REFRESH);
+};
+
 module.exports = {
   generateCode,
   createAccesToken,
   createRefreshToken,
   hashPassword,
   comparePassword,
+  verify,
 };
