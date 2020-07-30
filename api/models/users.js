@@ -103,10 +103,44 @@ const getByEmail = async (user = {}) => {
   });
 };
 
+const get_username = (user = {}, accessToken, cb) => {
+  connection((db) => {
+    db.collection("users").findOne({ email: user.email }, (err, userDb) => {
+      if (accessToken === userDb.accessToken) {
+        const username = userDb.username;
+        cb(username);
+      } else cb("");
+    });
+  });
+};
+
+const set_username = (user = {}, accessToken, cb) => {
+  connection(async (db) => {
+    const userDb = await db.collection("users").findOne({ email: user.email });
+
+    if (accessToken === userDb.accessToken) {
+      await db.collection("users").updateOne(
+        { email: user.email },
+        {
+          $set: {
+            username: user.username,
+          },
+        },
+        {
+          upsert: true,
+        }
+      );
+      cb(true);
+    } else cb(false);
+  });
+};
+
 module.exports = {
   register,
   getByEmail,
   login,
   updateToken,
   refresh_token,
+  get_username,
+  set_username,
 };

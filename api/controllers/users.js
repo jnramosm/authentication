@@ -1,4 +1,5 @@
 const { users } = require("../models");
+const utils = require("../utils");
 
 const register = async (req, res, next) => {
   try {
@@ -41,9 +42,9 @@ const login = (req, res, next) => {
 };
 
 const refresh_token = async (req, res, next) => {
-  const result = await users.refresh_token(
-    req.headers.cookie.split("=")[1],
-    async (tokens, email, message) => {
+  if (req.headers.cookie) {
+    const refreshToken = req.headers.cookie.split("=")[1];
+    await users.refresh_token(refreshToken, async (tokens, email, message) => {
       if (tokens.accessToken !== "") {
         await users.updateToken(email, tokens.accessToken);
 
@@ -56,10 +57,11 @@ const refresh_token = async (req, res, next) => {
         res.json({
           message,
           accessToken: tokens.accessToken,
+          email,
         });
       } else return res.json({ message, accessToken: "" });
-    }
-  );
+    });
+  } else res.json({ accessToken: "", message: "No refresh token" });
 };
 
 const logout = (req, res, next) => {
@@ -72,9 +74,27 @@ const logout = (req, res, next) => {
   res.json({ message: "Success" });
 };
 
+const get_username = (req, res, next) => {
+  const accessToken = req.headers.authorization.split(" ")[1];
+  users.get_username(req.body, accessToken, (username) => {
+    if (username) res.json({ username });
+    else res.json({ username: "" });
+  });
+};
+
+const set_username = async (req, res, next) => {
+  const accessToken = req.headers.authorization.split(" ")[1];
+  await users.set_username(req.body, accessToken, (ok) => {
+    if (ok) res.json({ message: "Success" });
+    else res.json({ message: "Invalid credentials" });
+  });
+};
+
 module.exports = {
   register,
   login,
   refresh_token,
   logout,
+  get_username,
+  set_username,
 };

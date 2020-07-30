@@ -12,11 +12,34 @@ export const refreshToken = async () => {
   return await requestApi("/refresh_token", "POST");
 };
 
+export const userLogout = async () => {
+  return await requestApi("/logout", "POST");
+};
+
+export const setUsername = async (email, username, accessToken) => {
+  return await requestApi(
+    "/setusername",
+    "POST",
+    { email, username },
+    { authorization: `bearer ${accessToken}` }
+  );
+};
+
+export const getUsername = async (email, accessToken) => {
+  return await requestApi(
+    "/getusername",
+    "POST",
+    { email },
+    { authorization: `bearer ${accessToken}` }
+  );
+};
+
 const requestApi = async (
   path = "",
   method = "GET",
   data = null,
-  headers = {}
+  headers = {},
+  authorization = {}
 ) => {
   // Check if API URL has been set
   if (!config?.domains?.api) {

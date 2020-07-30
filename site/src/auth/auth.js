@@ -2,6 +2,7 @@ class Auth {
   constructor() {
     this.authenticated = false;
     this.accessToken = "";
+    this.email = "";
   }
 
   setAccessToken(token) {
@@ -23,6 +24,13 @@ class Auth {
 
   getAccessToken() {
     return this.accessToken;
+  }
+
+  getEmail() {
+    return this.email;
+  }
+  setEmail(email) {
+    this.email = email;
   }
 }
 

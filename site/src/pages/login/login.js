@@ -29,6 +29,7 @@ export default class Login extends React.Component {
     if (res.message === "Success") {
       auth.setAuthentication(true);
       auth.setAccessToken(res.accessToken);
+      auth.setEmail(this.state.email);
       this.props.history.replace("/");
     }
     // this.setState({ loading: false });
